@@ -5,17 +5,19 @@ import BusFrame from './components/BusFrame';
 import MusicPlayer from './components/MusicPlayer';
 import RainEffect from './components/RainEffect';
 import AmbientPanel from './components/AmbientPanel';
+import RegionSelector from './components/RegionSelector';
+import { DEFAULT_REGION_ID, getRegionById } from './data/roadways';
 import './App.css';
-
-// User's requested playlist
-const PLAYLIST_ID = 'PLa0lLeBZ2zikvsewH6pnLwi0bzeht30-4';
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRainEnabled, setIsRainEnabled] = useState(false);
   const [environment, setEnvironment] = useState('day'); // 'day' | 'night'
   const [playerInstance, setPlayerInstance] = useState(null);
+  const [selectedRegionId, setSelectedRegionId] = useState(DEFAULT_REGION_ID);
   const playerRef = useRef(null);
+
+  const selectedRegion = getRegionById(selectedRegionId);
 
   const onPlayerReady = (event) => {
     playerRef.current = event.target;
@@ -42,12 +44,19 @@ function App() {
   const nextTrack = () => playerRef.current && playerRef.current.nextVideo();
   const prevTrack = () => playerRef.current && playerRef.current.previousVideo();
 
+  const handleSelectRegion = (regionId) => {
+    if (regionId === selectedRegionId) return;
+    setSelectedRegionId(regionId);
+    setIsPlaying(false);
+    setPlayerInstance(null);
+  };
+
   const opts = {
     height: '0',
     width: '0',
     playerVars: {
       listType: 'playlist',
-      list: PLAYLIST_ID,
+      list: selectedRegion.playlistId,
       autoplay: 0,
     },
   };
@@ -56,15 +65,18 @@ function App() {
     <div className="app-container">
       {/* Invisible YouTube Player */}
       <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
-        <YouTube opts={opts} onReady={onPlayerReady} onStateChange={onStateChange} />
+        <YouTube key={selectedRegion.id} opts={opts} onReady={onPlayerReady} onStateChange={onStateChange} />
       </div>
 
       <CanvasRoad environment={environment} />
-      
+
       <RainEffect isRainEnabled={isRainEnabled} />
-      
-      <BusFrame />
-      
+
+      <BusFrame region={selectedRegion} />
+
+      {/* Top Left: Region Selector */}
+      <RegionSelector selectedRegionId={selectedRegionId} onSelectRegion={handleSelectRegion} />
+
       {/* Bottom Right: Lights & Ambient Sound Panel */}
       <AmbientPanel
         environment={environment}
