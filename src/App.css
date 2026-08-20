@@ -26,11 +26,104 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  transition: filter 0.4s ease;
 }
 
 @keyframes busVibration {
   0% { transform: translateY(0) rotate(0deg); }
   100% { transform: translateY(1px) rotate(0.05deg); }
+}
+
+/* ── Region Selector (Top Left) ──────────────────────────────── */
+.region-panel {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  border-radius: 16px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 240px;
+}
+
+.region-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 2px;
+}
+
+.region-toggle-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.region-toggle-label {
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  animation: slideDown 0.25s ease;
+}
+
+.region-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.18s ease;
+}
+
+.region-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.region-chip.active {
+  background: rgba(255, 71, 87, 0.18);
+  border-color: rgba(255, 71, 87, 0.45);
+  color: #fff;
+}
+
+.region-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.region-chip-label {
+  font-size: 11px;
+  font-weight: 500;
 }
 
 /* ── Ambient Panel (Bottom Right) ────────────────────────────── */
