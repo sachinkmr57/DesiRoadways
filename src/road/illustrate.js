@@ -11,20 +11,20 @@ export const PALETTES = {
     skyHorizon: '#d5c6a8',
     sun: '#e6c878',
     sunInk: '#b8893a',
-    cloud: '#d8d0c4',
-    cloudShade: '#b8b0a4',
-    cloudInk: '#8a8478',
+    cloud: '#ece6da',
+    cloudShade: '#9a9080',
+    cloudInk: '#6a6458',
     hillFar: '#7d8a6a',
-    hillNear: '#4e5c3c',
+    hillNear: '#3e4c30',
     haze: 'rgba(210, 196, 168, 0.42)',
-    fieldOlive: '#5c6a3c',
-    fieldOliveDark: '#4e5c34',
-    fieldMustard: '#c4a44a',
-    fieldMustardDark: '#a88838',
+    fieldOlive: '#5e6a40',
+    fieldOliveDark: '#535c38',
+    fieldMustard: '#9a8644',
+    fieldMustardDark: '#8a763c',
     dust: '#7a6c54',
     dustDark: '#6a5e48',
     road: '#3c3a36',
-    roadDark: '#32302c',
+    roadDark: '#35332f',
     roadLine: '#c8b56a',
     ink: '#1a1410',
     inkSoft: '#2a241c',
@@ -34,39 +34,39 @@ export const PALETTES = {
     lampNight: '#ffd090',
     village: '#6a5a48',
     villageRoof: '#5a4030',
-    unify: 'rgba(196, 168, 130, 0.16)',
+    unify: 'rgba(196, 168, 130, 0.18)',
     bird: '#2a241c',
   },
   night: {
-    skyTop: '#0c0e18',
-    skyMid: '#161a28',
-    skyHorizon: '#2a2830',
+    skyTop: '#10141f',
+    skyMid: '#1a2030',
+    skyHorizon: '#3a3640',
     sun: '#e8e4d4',
     sunInk: '#9a9688',
-    cloud: '#3a3e52',
-    cloudShade: '#2a2e40',
-    cloudInk: '#1a1e28',
-    hillFar: '#1a2430',
-    hillNear: '#121a18',
-    haze: 'rgba(20, 22, 32, 0.5)',
-    fieldOlive: '#0e160e',
-    fieldOliveDark: '#0a120a',
-    fieldMustard: '#1c1a10',
-    fieldMustardDark: '#14120c',
-    dust: '#1c1a14',
-    dustDark: '#161410',
-    road: '#141412',
-    roadDark: '#10100e',
-    roadLine: '#5a5030',
-    ink: '#050508',
-    inkSoft: '#0a0a0c',
-    pole: '#2a2a28',
-    poleShadow: '#1a1a18',
+    cloud: '#4a4e62',
+    cloudShade: '#2e3244',
+    cloudInk: '#1c2030',
+    hillFar: '#243040',
+    hillNear: '#1a2820',
+    haze: 'rgba(40, 36, 48, 0.45)',
+    fieldOlive: '#1c281c',
+    fieldOliveDark: '#162016',
+    fieldMustard: '#2a2818',
+    fieldMustardDark: '#222016',
+    dust: '#2a261c',
+    dustDark: '#221e18',
+    road: '#1c1c1a',
+    roadDark: '#161614',
+    roadLine: '#8a7840',
+    ink: '#0a0a0e',
+    inkSoft: '#141418',
+    pole: '#3a3a38',
+    poleShadow: '#2a2a28',
     lampDay: '#d4c48a',
     lampNight: '#ffc878',
-    village: '#12141c',
-    villageRoof: '#1a1418',
-    unify: 'rgba(28, 32, 48, 0.28)',
+    village: '#1c2028',
+    villageRoof: '#241820',
+    unify: 'rgba(28, 32, 48, 0.14)',
     bird: '#0a0c12',
   },
 };
@@ -104,11 +104,11 @@ export function bakeGrain(size = 128) {
   const ctx = c.getContext('2d');
   const img = ctx.createImageData(size, size);
   for (let i = 0; i < img.data.length; i += 4) {
-    const v = 110 + Math.random() * 70;
+    const v = 100 + Math.random() * 90;
     img.data[i] = v;
-    img.data[i + 1] = v - 4;
-    img.data[i + 2] = v - 10;
-    img.data[i + 3] = 36;
+    img.data[i + 1] = v - 6;
+    img.data[i + 2] = v - 14;
+    img.data[i + 3] = 52;
   }
   ctx.putImageData(img, 0, 0);
   return c;
@@ -160,7 +160,7 @@ export function bakeTree(seed, w, h, kind) {
   ctx.closePath();
   ctx.fillStyle = '#3a2c22';
   ctx.fill();
-  inkStroke(ctx, pal, Math.max(1.6, w * 0.008));
+  inkStroke(ctx, pal, Math.max(2.4, w * 0.012));
   ctx.stroke();
 
   ctx.strokeStyle = '#2a1e16';
@@ -203,7 +203,7 @@ export function bakeTree(seed, w, h, kind) {
     blobPath(ctx, cx, cy, rx, ry, rng, 8 + (i % 3));
     ctx.fill();
     ctx.strokeStyle = ink;
-    ctx.lineWidth = Math.max(1.2, w * 0.006);
+    ctx.lineWidth = Math.max(2, w * 0.01);
     ctx.stroke();
   }
 
@@ -246,7 +246,7 @@ export function bakeBush(seed, w, h) {
     );
     ctx.fill();
     ctx.strokeStyle = ink;
-    ctx.lineWidth = Math.max(1.2, w * 0.012);
+    ctx.lineWidth = Math.max(2, w * 0.018);
     ctx.stroke();
   }
   return c;
@@ -411,9 +411,9 @@ export function drawSky(ctx, width, height, horizonY, pal, isNight) {
     for (let i = 0; i < 40; i++) {
       const sx = (i * 97) % width;
       const sy = ((i * 53) % Math.max(1, horizonY * 0.78));
-      ctx.globalAlpha = 0.25 + (i % 5) * 0.08;
+        ctx.globalAlpha = 0.45 + (i % 5) * 0.12;
       ctx.beginPath();
-      ctx.arc(sx, sy, i % 4 === 0 ? 1.3 : 0.7, 0, Math.PI * 2);
+      ctx.arc(sx, sy, i % 4 === 0 ? 1.6 : 0.9, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
@@ -421,9 +421,9 @@ export function drawSky(ctx, width, height, horizonY, pal, isNight) {
 }
 
 export function drawCelestial(ctx, width, height, pal, isNight) {
-  const cx = width * 0.78;
-  const cy = height * 0.1;
-  const r = isNight ? 22 : 30;
+  const cx = width * 0.7;
+  const cy = height * 0.185;
+  const r = isNight ? 20 : 26;
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = pal.sun;
@@ -494,12 +494,12 @@ export function drawHorizonLand(ctx, width, horizonY, pal) {
   ctx.fillStyle = pal.hillNear;
   ctx.beginPath();
   ctx.moveTo(0, horizonY);
-  for (let x = 0; x <= width; x += 6) {
+  for (let x = 0; x <= width; x += 5) {
     const n =
-      7 +
-      9 * Math.abs(Math.sin(x * 0.045 + 0.4)) +
-      5 * Math.abs(Math.sin(x * 0.11)) +
-      (x % 13) * 0.12;
+      14 +
+      16 * Math.abs(Math.sin(x * 0.045 + 0.4)) +
+      10 * Math.abs(Math.sin(x * 0.11)) +
+      (x % 13) * 0.2;
     ctx.lineTo(x, horizonY - n);
   }
   ctx.lineTo(width, horizonY);
@@ -591,11 +591,11 @@ export function drawPole(ctx, destX, destY, destW, destH, pal, isNight, side) {
   ctx.stroke();
 
   if (isNight) {
-    ctx.fillStyle = 'rgba(255, 186, 80, 0.1)';
+    ctx.fillStyle = 'rgba(255, 186, 80, 0.22)';
     ctx.beginPath();
     ctx.moveTo(lampX, lampY);
-    ctx.lineTo(lampX - postW * 9, destY + destH);
-    ctx.lineTo(lampX + postW * 9, destY + destH);
+    ctx.lineTo(lampX - postW * 11, destY + destH);
+    ctx.lineTo(lampX + postW * 11, destY + destH);
     ctx.closePath();
     ctx.fill();
   }
@@ -612,14 +612,60 @@ export function drawPolygon(ctx, x1, y1, w1, x2, y2, w2, color) {
   ctx.fill();
 }
 
+export function bakeHatch(size = 72) {
+  const c = document.createElement('canvas');
+  c.width = size;
+  c.height = size;
+  const ctx = c.getContext('2d');
+  ctx.strokeStyle = 'rgba(26, 20, 16, 0.55)';
+  ctx.lineWidth = 1;
+  for (let i = -size; i < size * 2; i += 7) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + size, size);
+    ctx.stroke();
+  }
+  return c;
+}
+
+export function tileHatch(ctx, hatch, width, height, horizonY) {
+  if (!hatch) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, horizonY, width, height - horizonY);
+  ctx.clip();
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = ctx.createPattern(hatch, 'repeat');
+  ctx.fillRect(0, horizonY, width, height - horizonY);
+  ctx.restore();
+}
+
 export function tileGrain(ctx, grain, width, height) {
   if (!grain) return;
   ctx.save();
   ctx.globalCompositeOperation = 'multiply';
   const pat = ctx.createPattern(grain, 'repeat');
   ctx.fillStyle = pat;
-  ctx.globalAlpha = 0.55;
+  ctx.globalAlpha = 0.72;
   ctx.fillRect(0, 0, width, height);
+  ctx.restore();
+}
+
+export function drawHeadlightWash(ctx, width, height, horizonY) {
+  ctx.save();
+  const g = ctx.createLinearGradient(width / 2, height, width / 2, horizonY);
+  g.addColorStop(0, 'rgba(255, 210, 140, 0.2)');
+  g.addColorStop(0.55, 'rgba(255, 210, 140, 0.06)');
+  g.addColorStop(1, 'rgba(255, 210, 140, 0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(width / 2 - width * 0.18, height);
+  ctx.lineTo(width / 2 + width * 0.18, height);
+  ctx.lineTo(width / 2 + 10, horizonY);
+  ctx.lineTo(width / 2 - 10, horizonY);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
 
@@ -632,12 +678,20 @@ export function unifyWash(ctx, width, height, pal) {
 }
 
 export function bakeSpriteSheet() {
-  const trees = [0, 1, 2, 3, 4].map((i) =>
-    bakeTree(1400 + i * 97, 280, 360, i % 3)
-  );
+  const treeSpecs = [
+    { seed: 1400, w: 240, h: 440, kind: 0, worldW: 1500 },
+    { seed: 1497, w: 320, h: 380, kind: 1, worldW: 2300 },
+    { seed: 1594, w: 300, h: 360, kind: 2, worldW: 1900 },
+    { seed: 1691, w: 240, h: 440, kind: 0, worldW: 1600 },
+    { seed: 1788, w: 320, h: 380, kind: 1, worldW: 2400 },
+    { seed: 1885, w: 300, h: 360, kind: 2, worldW: 1800 },
+  ];
+  const trees = treeSpecs.map((s) => bakeTree(s.seed, s.w, s.h, s.kind));
+  const treeWidths = treeSpecs.map((s) => s.worldW);
   const bushes = [0, 1, 2].map((i) => bakeBush(2400 + i * 53, 180, 120));
   const trucks = [0, 1, 2].map((i) => bakeTruck(3400 + i * 71, 240, 180));
   const cars = [0, 1, 2, 3].map((i) => bakeCar(4400 + i * 67, 200, 130));
   const grain = bakeGrain(128);
-  return { trees, bushes, trucks, cars, grain };
+  const hatch = bakeHatch(72);
+  return { trees, treeWidths, bushes, trucks, cars, grain, hatch };
 }

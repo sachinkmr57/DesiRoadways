@@ -12,7 +12,9 @@ import {
   drawPole,
   drawPolygon,
   tileGrain,
+  tileHatch,
   unifyWash,
+  drawHeadlightWash,
 } from '../road/illustrate';
 
 const CanvasRoad = ({ environment }) => {
@@ -50,11 +52,12 @@ const CanvasRoad = ({ environment }) => {
         worldW: 0,
       };
 
-      if (i % 16 === 0 && Math.random() > 0.18) {
+      if (i % 9 === 0 && Math.random() > 0.12) {
+        const idx = i % sprites.trees.length;
         line.kind = 'tree';
-        line.sprite = sprites.trees[i % sprites.trees.length];
-        line.spriteX = (Math.random() > 0.5 ? 1 : -1) * (1.45 + Math.random() * 2.1);
-        line.worldW = 2000 + (i % 3) * 400;
+        line.sprite = sprites.trees[idx];
+        line.spriteX = (Math.random() > 0.5 ? 1 : -1) * (1.32 + Math.random() * 2.3);
+        line.worldW = sprites.treeWidths[idx];
       } else if (i % 11 === 0 && Math.random() > 0.28) {
         line.kind = 'bush';
         line.sprite = sprites.bushes[i % sprites.bushes.length];
@@ -63,8 +66,8 @@ const CanvasRoad = ({ environment }) => {
       } else if (i % 26 === 0) {
         line.kind = 'pole';
         line.spriteX = (Math.random() > 0.5 ? 1 : -1) * 1.06;
-      } else if (i % 110 === 0 && Math.random() > 0.4) {
-        const isTruck = Math.random() > 0.35;
+      } else if (i % 70 === 0 && Math.random() > 0.35) {
+        const isTruck = Math.random() > 0.3;
         line.kind = isTruck ? 'truck' : 'car';
         line.sprite = isTruck
           ? sprites.trucks[i % sprites.trucks.length]
@@ -76,13 +79,13 @@ const CanvasRoad = ({ environment }) => {
       lines.push(line);
     }
 
-    const clouds = Array.from({ length: 12 }, (_, i) => ({
-      x: (i / 12) * 2.2 - 0.3 + rngCloud() * 0.1,
-      y: 0.12 + rngCloud() * 0.62,
-      w: 0.2 + rngCloud() * 0.28,
-      h: 0.06 + rngCloud() * 0.07,
+    const clouds = Array.from({ length: 8 }, (_, i) => ({
+      x: (i / 8) * 2.2 - 0.3 + rngCloud() * 0.1,
+      y: 0.32 + rngCloud() * 0.4,
+      w: 0.28 + rngCloud() * 0.22,
+      h: 0.08 + rngCloud() * 0.06,
       speed: 0.0015 + rngCloud() * 0.0035,
-      alpha: 0.4 + rngCloud() * 0.28,
+      alpha: 0.62 + rngCloud() * 0.22,
       seed: 900 + i * 17,
     }));
 
@@ -100,17 +103,10 @@ const CanvasRoad = ({ environment }) => {
     window.addEventListener('resize', resize);
 
     const fieldColor = (pal, z) => {
-      const band = Math.floor(z / (segmentLength * 14)) % 4;
-      switch (band) {
-        case 0:
-          return pal.fieldOlive;
-        case 1:
-          return pal.fieldMustard;
-        case 2:
-          return pal.fieldOliveDark;
-        default:
-          return pal.fieldMustardDark;
-      }
+      const band = Math.floor(z / (segmentLength * 88)) % 3;
+      if (band === 1) return pal.fieldMustard;
+      if (band === 2) return pal.fieldOliveDark;
+      return pal.fieldOlive;
     };
 
     const render = (now) => {
@@ -250,7 +246,7 @@ const CanvasRoad = ({ environment }) => {
           if (destY <= height && destW > 1) {
             ctx.save();
             ctx.globalAlpha = distFade;
-            if (isNight) ctx.filter = 'brightness(0.42) saturate(0.55)';
+            if (isNight) ctx.filter = 'brightness(0.72) saturate(0.45)';
             ctx.drawImage(sprite, destX - destW / 2, destY, destW, destH);
             ctx.filter = 'none';
             ctx.restore();
@@ -258,6 +254,8 @@ const CanvasRoad = ({ environment }) => {
         }
       }
 
+      if (isNight) drawHeadlightWash(ctx, width, height, horizonY);
+      tileHatch(ctx, sprites.hatch, width, height, horizonY);
       unifyWash(ctx, width, height, pal);
       tileGrain(ctx, sprites.grain, width, height);
 
