@@ -1,4 +1,20 @@
 import React, { useEffect, useRef } from 'react';
+import treeSrc from '../assets/tree.png';
+import carSrc from '../assets/car.png';
+
+const fitCanvas = (canvas, ctx) => {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const width = canvas.clientWidth || window.innerWidth;
+  const height = canvas.clientHeight || window.innerHeight;
+  const bw = Math.max(1, Math.round(width * dpr));
+  const bh = Math.max(1, Math.round(height * dpr));
+  if (canvas.width !== bw || canvas.height !== bh) {
+    canvas.width = bw;
+    canvas.height = bh;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { width, height };
+};
 
 const CanvasRoad = ({ environment }) => {
   const canvasRef = useRef(null);
@@ -15,9 +31,9 @@ const CanvasRoad = ({ environment }) => {
     
     // Load Sprites
     const treeImg = new Image();
-    treeImg.src = '/src/assets/tree.png';
+    treeImg.src = treeSrc;
     const carImg = new Image();
-    carImg.src = '/src/assets/car.png';
+    carImg.src = carSrc;
 
     // Simple 3D projection parameters
     const cameraDepth = 0.8;
@@ -171,12 +187,9 @@ const CanvasRoad = ({ environment }) => {
     };
 
     const render = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const { width, height } = fitCanvas(canvas, ctx);
       
       const isNight = environment === 'night';
-      const width = canvas.width;
-      const height = canvas.height;
       const horizonY = height * horizonYRatio;
       
       drawSky(width, height, isNight);
@@ -316,7 +329,7 @@ const CanvasRoad = ({ environment }) => {
     return () => cancelAnimationFrame(animationId);
   }, [environment]);
 
-  return <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }} />;
+  return <canvas ref={canvasRef} className="road-canvas" />;
 };
 
 export default CanvasRoad;

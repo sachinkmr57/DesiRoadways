@@ -64,23 +64,23 @@ function App() {
       <RainEffect isRainEnabled={isRainEnabled} />
       
       <BusFrame />
-      
-      {/* Bottom Right: Lights & Ambient Sound Panel */}
-      <AmbientPanel
-        environment={environment}
-        onToggleEnvironment={setEnvironment}
-        isRainEnabled={isRainEnabled}
-        onToggleRain={(v) => setIsRainEnabled(v)}
-      />
 
-      {/* Bottom Center Music Player */}
-      <MusicPlayer 
-        playerInstance={playerInstance}
-        isPlaying={isPlaying}
-        onTogglePlay={togglePlay}
-        onNext={nextTrack}
-        onPrev={prevTrack}
-      />
+      <div className="hud-stack">
+        <AmbientPanel
+          environment={environment}
+          onToggleEnvironment={setEnvironment}
+          isRainEnabled={isRainEnabled}
+          onToggleRain={(v) => setIsRainEnabled(v)}
+        />
+
+        <MusicPlayer
+          playerInstance={playerInstance}
+          isPlaying={isPlaying}
+          onTogglePlay={togglePlay}
+          onNext={nextTrack}
+          onPrev={prevTrack}
+        />
+      </div>
     </div>
   );
 }

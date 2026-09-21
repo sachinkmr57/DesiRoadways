@@ -115,16 +115,20 @@ const AmbientPanel = ({ environment, onToggleEnvironment, isRainEnabled, onToggl
         {/* Environment toggles */}
         <div className="env-toggles">
           <button
+            type="button"
             className={clsx('env-btn', { active: environment === 'day' })}
             onClick={() => onToggleEnvironment('day')}
             title="Day mode"
+            aria-label="Day mode"
           >
             <Sun size={18} />
           </button>
           <button
+            type="button"
             className={clsx('env-btn', { active: environment === 'night' })}
             onClick={() => onToggleEnvironment('night')}
             title="Night mode"
+            aria-label="Night mode"
           >
             <Moon size={18} />
           </button>
@@ -134,18 +138,23 @@ const AmbientPanel = ({ environment, onToggleEnvironment, isRainEnabled, onToggl
 
         {/* Volume control */}
         <button
+          type="button"
           className={clsx('env-btn', { active: showVolumeSlider })}
           onClick={() => setShowVolumeSlider(v => !v)}
           title="Ambient volume"
+          aria-label="Ambient volume"
         >
           {ambientVolume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
 
         {/* Expand/collapse sounds */}
         <button
+          type="button"
           className={clsx('env-btn expand-btn', { active: expanded || activeSound !== 'none' })}
           onClick={() => setExpanded(e => !e)}
           title="Ambient sounds"
+          aria-label={expanded ? 'Hide ambient sounds' : 'Show ambient sounds'}
+          aria-expanded={expanded}
         >
           <span className="active-sound-emoji">
             {activeSound !== 'none' ? activeLabel?.icon : '🎵'}
@@ -182,9 +191,11 @@ const AmbientPanel = ({ environment, onToggleEnvironment, isRainEnabled, onToggl
           {AMBIENT_SOUNDS.map(sound => (
             <button
               key={sound.id}
+              type="button"
               className={clsx('sound-chip', { active: activeSound === sound.id })}
               onClick={() => selectSound(sound.id)}
               title={sound.label}
+              aria-pressed={activeSound === sound.id}
             >
               <span className="sound-emoji">{sound.icon}</span>
               <span className="sound-label">{sound.label}</span>
