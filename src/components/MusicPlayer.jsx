@@ -54,7 +54,7 @@ const MusicPlayer = ({ playerInstance, isPlaying, onTogglePlay, onNext, onPrev }
     };
   }, []);
 
-  // Close playlist when clicking outside
+  // Close playlist when clicking / tapping outside, or pressing Escape
   useEffect(() => {
     if (!playlistOpen) return;
     const onPointer = (e) => {
@@ -62,9 +62,24 @@ const MusicPlayer = ({ playerInstance, isPlaying, onTogglePlay, onNext, onPrev }
         setPlaylistOpen(false);
       }
     };
+    const onKey = (e) => {
+      if (e.key === 'Escape') setPlaylistOpen(false);
+    };
     document.addEventListener('mousedown', onPointer);
-    return () => document.removeEventListener('mousedown', onPointer);
+    document.addEventListener('touchstart', onPointer, { passive: true });
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onPointer);
+      document.removeEventListener('touchstart', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
   }, [playlistOpen]);
+
+  useEffect(() => {
+    if (!playlistOpen) return;
+    const el = menuRef.current?.querySelector('.playlist-item.active');
+    el?.scrollIntoView({ block: 'nearest' });
+  }, [playlistOpen, playlistIndex]);
 
   useEffect(() => {
     let interval;
@@ -218,91 +233,94 @@ const MusicPlayer = ({ playerInstance, isPlaying, onTogglePlay, onNext, onPrev }
         </div>
       )}
 
-      <div className="player-info">
-        <div className="player-now-playing">
-          <div className="track-thumb-wrap">
-            {cover ? (
-              <img className="track-thumb" src={cover} alt="" />
-            ) : (
-              <div className="track-thumb track-thumb-placeholder" />
-            )}
-          </div>
-          <div className="track-title-container">
-            <div className={clsx('track-title', { scrolling: title.length > 28 })}>
-              {title}
+      <div className="player-body">
+        <div className="player-info">
+          <div className="player-now-playing">
+            <div className="track-thumb-wrap">
+              {cover ? (
+                <img className="track-thumb" src={cover} alt="" />
+              ) : (
+                <div className="track-thumb track-thumb-placeholder" />
+              )}
+            </div>
+            <div className="track-title-container">
+              <div className={clsx('track-title', { scrolling: title.length > 28 })}>
+                {title}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="player-progress">
-        <span className="time">{formatTime(currentTime)}</span>
-        <input
-          type="range"
-          min="0"
-          max={duration || 100}
-          value={currentTime}
-          onChange={handleSeek}
-          onMouseDown={() => setDraggingProgress(true)}
-          onMouseUp={() => setDraggingProgress(false)}
-          onTouchStart={() => setDraggingProgress(true)}
-          onTouchEnd={() => setDraggingProgress(false)}
-          className={clsx('progress-slider', { dragging: draggingProgress })}
-          style={{ '--progress': `${progressPct}%` }}
-          aria-label="Seek"
-        />
-        <span className="time">{formatTime(duration)}</span>
-      </div>
-
-      <div className="player-controls">
-        <div className={clsx('volume-control', { visible: isHovering || draggingVolume })}>
-          {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        <div className="player-progress">
+          <span className="time">{formatTime(currentTime)}</span>
           <input
             type="range"
             min="0"
-            max="100"
-            value={volume}
-            onChange={handleVolumeChange}
-            onMouseDown={() => setDraggingVolume(true)}
-            onMouseUp={() => setDraggingVolume(false)}
-            onTouchStart={() => setDraggingVolume(true)}
-            onTouchEnd={() => setDraggingVolume(false)}
-            className={clsx('volume-slider small', { dragging: draggingVolume })}
-            style={{ '--progress': `${volume}%` }}
-            aria-label="Volume"
+            max={duration || 100}
+            value={currentTime}
+            onChange={handleSeek}
+            onMouseDown={() => setDraggingProgress(true)}
+            onMouseUp={() => setDraggingProgress(false)}
+            onTouchStart={() => setDraggingProgress(true)}
+            onTouchEnd={() => setDraggingProgress(false)}
+            className={clsx('progress-slider', { dragging: draggingProgress })}
+            style={{ '--progress': `${progressPct}%` }}
+            aria-label="Seek"
           />
+          <span className="time">{formatTime(duration)}</span>
         </div>
 
-        <div className="playback-controls">
-          <button className="icon-btn" onClick={onPrev} aria-label="Previous">
-            <SkipBack size={20} fill="currentColor" />
-          </button>
-          <button
-            className="icon-btn play-btn"
-            onClick={onTogglePlay}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-          >
-            {isPlaying ? (
-              <Pause size={24} fill="currentColor" />
-            ) : (
-              <Play size={24} fill="currentColor" className="ml-1" />
-            )}
-          </button>
-          <button className="icon-btn" onClick={onNext} aria-label="Next">
-            <SkipForward size={20} fill="currentColor" />
-          </button>
-        </div>
+        <div className="player-controls">
+          <div className={clsx('volume-control', { visible: isHovering || draggingVolume })}>
+            {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume}
+              onChange={handleVolumeChange}
+              onMouseDown={() => setDraggingVolume(true)}
+              onMouseUp={() => setDraggingVolume(false)}
+              onTouchStart={() => setDraggingVolume(true)}
+              onTouchEnd={() => setDraggingVolume(false)}
+              className={clsx('volume-slider small', { dragging: draggingVolume })}
+              style={{ '--progress': `${volume}%` }}
+              aria-label="Volume"
+            />
+          </div>
 
-        <div className="player-controls-end">
-          <button
-            type="button"
-            className={clsx('icon-btn playlist-btn', { active: playlistOpen })}
-            onClick={openPlaylist}
-            aria-label="View playlist"
-            aria-expanded={playlistOpen}
-          >
-            <ListMusic size={20} />
-          </button>
+          <div className="playback-controls">
+            <button type="button" className="icon-btn" onClick={onPrev} aria-label="Previous">
+              <SkipBack size={20} fill="currentColor" />
+            </button>
+            <button
+              type="button"
+              className="icon-btn play-btn"
+              onClick={onTogglePlay}
+              aria-label={isPlaying ? 'Pause' : 'Play'}
+            >
+              {isPlaying ? (
+                <Pause size={24} fill="currentColor" />
+              ) : (
+                <Play size={24} fill="currentColor" className="ml-1" />
+              )}
+            </button>
+            <button type="button" className="icon-btn" onClick={onNext} aria-label="Next">
+              <SkipForward size={20} fill="currentColor" />
+            </button>
+          </div>
+
+          <div className="player-controls-end">
+            <button
+              type="button"
+              className={clsx('icon-btn playlist-btn', { active: playlistOpen })}
+              onClick={openPlaylist}
+              aria-label="View playlist"
+              aria-expanded={playlistOpen}
+            >
+              <ListMusic size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -89,18 +89,25 @@ const CanvasRoad = ({ environment }) => {
       seed: 900 + i * 17,
     }));
 
+    const cssSize = () => ({
+      width: canvas.clientWidth || window.innerWidth,
+      height: canvas.clientHeight || window.innerHeight,
+    });
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
+      const { width, height } = cssSize();
+      const bw = Math.max(1, Math.round(width * dpr));
+      const bh = Math.max(1, Math.round(height * dpr));
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw;
+        canvas.height = bh;
+      }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
     window.addEventListener('resize', resize);
+    window.visualViewport?.addEventListener('resize', resize);
 
     const fieldColor = (pal, z) => {
       const band = Math.floor(z / (segmentLength * 88)) % 3;
@@ -113,10 +120,11 @@ const CanvasRoad = ({ environment }) => {
       const dt = Math.min(48, now - last);
       last = now;
 
+      resize();
+
       const isNight = environment === 'night';
       const pal = isNight ? PALETTES.night : PALETTES.day;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const { width, height } = cssSize();
       const horizonY = height * horizonYRatio;
 
       ctx.imageSmoothingEnabled = true;
@@ -267,10 +275,11 @@ const CanvasRoad = ({ environment }) => {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
     };
   }, [environment]);
 
-  return <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }} />;
+  return <canvas ref={canvasRef} className="road-canvas" />;
 };
 
 export default CanvasRoad;

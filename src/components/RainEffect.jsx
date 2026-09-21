@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const RainEffect = ({ isRainEnabled }) => {
   const canvasRef = useRef(null);
@@ -79,18 +79,27 @@ const RainEffect = ({ isRainEnabled }) => {
     let particles = [];
     
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+      canvas.width = Math.max(1, Math.round(w * dpr));
+      canvas.height = Math.max(1, Math.round(h * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    
+
     window.addEventListener('resize', resize);
+    window.visualViewport?.addEventListener('resize', resize);
     resize();
 
+    const initW = canvas.clientWidth || window.innerWidth;
+    const initH = canvas.clientHeight || window.innerHeight;
+    const dropCount = initW < 700 ? 80 : 150;
+
     // Create rain drops
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < dropCount; i++) {
       particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * initW,
+        y: Math.random() * initH,
         length: Math.random() * 20 + 10,
         speed: Math.random() * 10 + 15,
         opacity: Math.random() * 0.3 + 0.1
@@ -98,12 +107,14 @@ const RainEffect = ({ isRainEnabled }) => {
     }
 
     const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+
       if (isRainEnabled) {
         ctx.lineWidth = 1;
         ctx.lineCap = 'round';
-        
+
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           ctx.beginPath();
@@ -112,17 +123,17 @@ const RainEffect = ({ isRainEnabled }) => {
           ctx.lineTo(p.x - p.length * 0.5, p.y + p.length);
           ctx.strokeStyle = `rgba(200, 220, 255, ${p.opacity})`;
           ctx.stroke();
-          
+
           p.y += p.speed;
           p.x -= p.speed * 0.5; // Wind effect
-          
-          if (p.y > canvas.height) {
+
+          if (p.y > h) {
             p.y = -p.length;
-            p.x = Math.random() * canvas.width + 100; // Shifted due to wind
+            p.x = Math.random() * w + 100; // Shifted due to wind
           }
         }
       }
-      
+
       animationFrameId = requestAnimationFrame(render);
     };
     
@@ -130,6 +141,7 @@ const RainEffect = ({ isRainEnabled }) => {
 
     return () => {
       window.removeEventListener('resize', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
   }, [isRainEnabled]);
