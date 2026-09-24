@@ -1,13 +1,12 @@
 import React from 'react';
-import busInterior from '../assets/haryana_bus_interior_masked.png';
 
-const BusFrame = () => {
+const BusFrame = ({ interiorSrc }) => {
   return (
     <div className="bus-frame-container">
       {/* Transparent PNG — road animation shows through keyed windows */}
       <div
         className="bus-interior-img"
-        style={{ backgroundImage: `url(${busInterior})` }}
+        style={{ backgroundImage: `url(${interiorSrc})` }}
       />
     </div>
   );
